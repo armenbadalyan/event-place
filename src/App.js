@@ -1,26 +1,30 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { Route, Switch } from "react-router-dom";
+import Home from "./pages/home/Home";
+import { ThemeProvider } from "styled-components";
+import theme from "./common/theme";
+import GlobalStyles from "./common/global-styles";
+import EventDetails from "./pages/event-details/EventDetails";
+import Auth from "./pages/auth/Auth";
+import { authStore } from "./stores";
 
 class App extends Component {
+  componentDidMount() {
+    authStore.checkSession();
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <ThemeProvider theme={theme}>
+        <>
+          <GlobalStyles />
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/event/:id" component={EventDetails} />
+            <Route path="/auth" component={Auth} />
+          </Switch>
+        </>
+      </ThemeProvider>
     );
   }
 }
