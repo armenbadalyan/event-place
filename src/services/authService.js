@@ -31,7 +31,11 @@ export default class AuthService {
     });
   }
   me() {
-    api.get("/users/me");
+    return api.get("/users/me").then(({ data }) => {
+      if (!data.id) {
+        return Promise.reject();
+      }
+    });
   }
 
   formatErrors(errorResponse) {

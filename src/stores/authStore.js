@@ -20,7 +20,7 @@ export class AuthStore {
   logIn = (username, password) => {
     return this.authService.logIn(username, password).then(
       action("Log in success", ({ data }) => {
-        this.isLoggedIn = true;
+        this.setLoggedIn();
         return data;
       })
     );
@@ -31,6 +31,20 @@ export class AuthStore {
     this.setLoggedOut();
   };
 
+  checkSession = () => {
+    return this.authService
+      .me()
+      .then(
+        action(() => {
+          this.setLoggedIn();
+          return true;
+        })
+      )
+      .catch(() => {
+        return false;
+      });
+  };
+
   setModeLogin = () => {
     this.mode = "login";
   };
@@ -38,6 +52,10 @@ export class AuthStore {
   setModeRegistration = () => {
     this.mode = "registration";
   };
+
+  setLoggedIn = action(() => {
+    this.isLoggedIn = true;
+  });
 
   setLoggedOut = action(() => {
     this.isLoggedIn = false;

@@ -2,7 +2,7 @@ import api from "./api";
 
 export default class EventService {
   get(id) {
-    return api.get(`/events/${id}`);
+    return api.get(`/events/${id}/`);
   }
   update(id, event) {
     return api.patch(`/events/${id}/`, event);
