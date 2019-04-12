@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { formatPrice } from "../common/utils";
+import { formatPrice } from "../../common/utils";
 import { Label } from "./Label";
 
 export default function PriceRange({ minPrice, maxPrice, ...otherProps }) {

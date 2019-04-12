@@ -1,13 +1,18 @@
 import React, { Component } from "react";
 import { Route, Switch } from "react-router-dom";
-import Home from "./pages/home/Home";
+import Home from "./ui/pages/home/Home";
 import { ThemeProvider } from "styled-components";
-import theme from "./common/theme";
-import GlobalStyles from "./common/global-styles";
-import EventDetails from "./pages/event-details/EventDetails";
-import Auth from "./pages/auth/Auth";
+import theme from "./ui/theme";
+import GlobalStyles from "./ui/global-styles";
+import EventDetails from "./ui/pages/event-details/EventDetails";
+import Auth from "./ui/pages/auth/Auth";
+import { inject } from "mobx-react";
 
 class App extends Component {
+  componentDidMount() {
+    this.props.authStore.checkSession();
+  }
+
   render() {
     return (
       <ThemeProvider theme={theme}>
@@ -24,4 +29,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default inject("authStore")(App);

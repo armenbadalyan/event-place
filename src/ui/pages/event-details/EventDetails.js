@@ -8,7 +8,7 @@ import Padding from "../../components/Padding";
 import DescriptionRenderer from "./DescriptionRenderer";
 import { GridRow, GridItem13, GridItem23 } from "../../components/Grid";
 import { Label, MultiLabel } from "../../components/Label";
-import { formatDate, formatTime } from "../../common/utils";
+import { formatDate, formatTime } from "../../../common/utils";
 import EditableLabel from "./EditableLabel";
 
 export class EventDetails extends React.Component {
