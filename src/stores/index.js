@@ -1,3 +1,19 @@
-export { default as eventStore } from "./eventStore";
-export { default as eventDetailsStore } from "./eventDetailsStore";
-export { default as authStore } from "./authStore";
+import { AuthStore } from "./authStore";
+import { EventStore } from "./eventStore";
+import { EventDetailsStore } from "./eventDetailsStore";
+import AuthService from "../services/authService";
+import EventService from "../services/eventService";
+
+export default function initStores() {
+  const authService = new AuthService();
+  const eventService = new EventService();
+  const authStore = new AuthStore(authService);
+  const eventStore = new EventStore(eventService);
+  const eventDetailsStore = new EventDetailsStore(eventStore);
+
+  return {
+    authStore,
+    eventStore,
+    eventDetailsStore
+  };
+}

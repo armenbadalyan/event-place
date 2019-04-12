@@ -4,17 +4,13 @@ import { BrowserRouter } from "react-router-dom";
 import { configure } from "mobx";
 import { Provider } from "mobx-react";
 import App from "./App";
-import { eventStore, eventDetailsStore, authStore } from "./stores";
 import * as serviceWorker from "./serviceWorker";
 import "normalize.css";
+import initStores from "./stores";
 
-const stores = {
-  eventStore,
-  eventDetailsStore,
-  authStore
-};
+configure({ enforceActions: "observed" });
 
-configure({ enforceActions: "always" });
+const stores = initStores();
 
 ReactDOM.render(
   <Provider {...stores}>

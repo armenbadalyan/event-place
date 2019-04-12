@@ -1,17 +1,20 @@
 import { decorate, observable, action } from "mobx";
-import eventStore from "./eventStore";
 
-class EventDetailsStore {
+export class EventDetailsStore {
   eventId = null;
+
+  constructor(eventStore) {
+    this.eventStore = eventStore;
+  }
 
   setEventId(eventId) {
     this.eventId = eventId;
 
-    eventStore.loadEvent(eventId);
+    this.eventStore.loadEvent(eventId);
   }
 
   updateEventName(name) {
-    eventStore.updateEvent(this.eventId, { name });
+    this.eventStore.updateEvent(this.eventId, { name });
   }
 }
 
@@ -20,5 +23,3 @@ decorate(EventDetailsStore, {
   setEventId: action,
   updateEventName: action
 });
-
-export default new EventDetailsStore();

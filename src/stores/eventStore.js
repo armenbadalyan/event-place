@@ -1,13 +1,16 @@
 import { decorate, observable, action, computed } from "mobx";
-import api from "../common/api";
 
 const defaultPageSize = 20;
 
-class EventStore {
+export class EventStore {
   eventStorage = [];
   loading = false;
   currentPage = 0;
   pageSize = defaultPageSize;
+
+  constructor(eventService) {
+    this.eventService = eventService;
+  }
 
   get events() {
     return this.eventStorage;
@@ -29,8 +32,8 @@ class EventStore {
   loadEvents() {
     this.loading = true;
 
-    api
-      .get("/events/search", {
+    return this.eventService
+      .search({
         limit: this.pageSize,
         offset: this.pageSize * this.currentPage
       })
@@ -47,8 +50,8 @@ class EventStore {
   }
 
   loadEvent(eventId) {
-    return api
-      .get(`/events/${eventId}`)
+    return this.eventService
+      .get(eventId)
       .then(
         action("loadEvent success", ({ data }) => {
           let idx = this.eventStorage.findIndex(event => event.id === data.id);
@@ -63,8 +66,8 @@ class EventStore {
   }
 
   updateEvent(id, eventFields) {
-    return api
-      .patch(`/events/${id}/`, eventFields)
+    return this.eventService
+      .update(id, eventFields)
       .then(
         action("updateEvent success", ({ data }) => {
           const event = this.getEvent(id);
@@ -89,5 +92,3 @@ decorate(EventStore, {
   loadEvent: action,
   updateEvent: action
 });
-
-export default new EventStore();

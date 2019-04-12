@@ -10,11 +10,26 @@ export class Api {
     });
 
     this.service = service;
+    this.authCallback = null;
 
+    // recover session token from storage
     const token = localStorage.getItem(tokenStorageKey);
     if (token) {
       this.setAuthTokenHeader(token);
     }
+
+    // setup auth interceptor
+    service.interceptors.response.use(
+      response => {
+        return response;
+      },
+      error => {
+        if (typeof this.authCallback === "function") {
+          this.authCallback(error);
+        }
+        if (error) return Promise.reject(error);
+      }
+    );
   }
 
   get(path, parameters, cancelToken) {
@@ -70,6 +85,10 @@ export class Api {
 
   saveTokenToStorage(token) {
     localStorage.setItem(tokenStorageKey, token);
+  }
+
+  onAuthError(сallback) {
+    this.authCallback = сallback;
   }
 }
 

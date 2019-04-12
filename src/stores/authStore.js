@@ -1,36 +1,34 @@
 import { decorate, observable, action } from "mobx";
-import api from "../common/api";
 
-class AuthStore {
+export class AuthStore {
   isLoggedIn = false;
   mode = "login";
 
-  register = (email, password) => {
-    return api
-      .post("/users/register", { email, password })
-      .catch(({ response }) => {
-        return { errors: this.formatErrors(response) };
-      });
+  constructor(authService) {
+    this.authService = authService;
+    this.authService.onAuthError(() => {
+      this.setLoggedOut();
+    });
+  }
+
+  register = (username, password) => {
+    return this.authService.register(username, password).then(({ data }) => {
+      return data;
+    });
   };
 
   logIn = (username, password) => {
-    return api
-      .post("/users/token/", { username, password })
-      .then(
-        action("Log in success", ({ data }) => {
-          this.isLoggedIn = true;
-          api.setSessionToken(data.token);
-          return data;
-        })
-      )
-      .catch(({ response }) => {
-        return { errors: this.formatErrors(response) };
-      });
+    return this.authService.logIn(username, password).then(
+      action("Log in success", ({ data }) => {
+        this.isLoggedIn = true;
+        return data;
+      })
+    );
   };
 
   logOut = () => {
-    api.clearSessionToken();
-    this.isLoggedIn = false;
+    this.authService.logOut();
+    this.setLoggedOut();
   };
 
   setModeLogin = () => {
@@ -41,44 +39,9 @@ class AuthStore {
     this.mode = "registration";
   };
 
-  checkSession = () => {
-    return api
-      .get("/users/me")
-      .then(
-        action(({ data }) => {
-          if (!data.id) {
-            this.invalidateSession();
-          } else {
-            this.isLoggedIn = true;
-          }
-        })
-      )
-      .catch(({ response }) => {
-        if (response.status === 401 || response.status === 403) {
-          this.invalidateSession();
-        }
-      });
-  };
-
-  invalidateSession = action(() => {
+  setLoggedOut = action(() => {
     this.isLoggedIn = false;
-    api.clearSessionToken();
   });
-
-  formatErrors(errorResponse) {
-    let formattedErrors = {};
-    if (errorResponse.data) {
-      let serverErrors = errorResponse.data;
-      for (let key in serverErrors) {
-        if (serverErrors.hasOwnProperty(key))
-          formattedErrors[key] = serverErrors[key][0];
-      }
-    } else {
-      formattedErrors["non_field_errors"] = "Unknown error";
-    }
-
-    return formattedErrors;
-  }
 }
 
 decorate(AuthStore, {
@@ -92,5 +55,3 @@ decorate(AuthStore, {
   setModeLogin: action,
   setModeRegistration: action
 });
-
-export default new AuthStore();

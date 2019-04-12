@@ -15,11 +15,10 @@ class Registration extends React.Component {
     authStore
       .register(values.email, values.password)
       .then(res => {
-        if (res.errors) {
-          setErrors(res.errors);
-        } else {
-          authStore.setModeLogin();
-        }
+        authStore.setModeLogin();
+      })
+      .catch(errors => {
+        setErrors(errors);
       })
       .finally(() => {
         setSubmitting(false);

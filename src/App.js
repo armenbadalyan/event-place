@@ -6,13 +6,8 @@ import theme from "./common/theme";
 import GlobalStyles from "./common/global-styles";
 import EventDetails from "./pages/event-details/EventDetails";
 import Auth from "./pages/auth/Auth";
-import { authStore } from "./stores";
 
 class App extends Component {
-  componentDidMount() {
-    authStore.checkSession();
-  }
-
   render() {
     return (
       <ThemeProvider theme={theme}>

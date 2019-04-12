@@ -16,11 +16,10 @@ class Login extends React.Component {
     authStore
       .logIn(values.username, values.password)
       .then(res => {
-        if (res.errors) {
-          setErrors(res.errors);
-        } else {
-          history.goBack();
-        }
+        history.goBack();
+      })
+      .catch(errors => {
+        setErrors(errors);
       })
       .finally(() => {
         setSubmitting(false);
