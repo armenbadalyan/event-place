@@ -19,6 +19,10 @@ A simple React application that allows listing, viewing and editing events.
 
 ## Project setup
 
+### `npm install` or `yarn`
+
+Downloads npm dependencies.
+
 ### `npm start`
 
 Runs the app in the development mode.<br>
