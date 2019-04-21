@@ -15,7 +15,6 @@ export class Home extends React.Component {
   }
 
   loadMoreEvents = () => {
-    this.props.eventStore.nextPage();
     this.props.eventStore.loadEvents();
   };
 
