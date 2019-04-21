@@ -26,7 +26,10 @@ export class EventStore {
       })
       .then(
         action("loadEvents success", ({ events, hasNext }) => {
-          this.eventStorage = uniqBy(this.eventStorage.concat(events), "id");
+          this.eventStorage = uniqBy(
+            this.eventStorage.concat(events),
+            "id"
+          ).sort(this.compareDates);
 
           return {
             hasNext,
@@ -75,6 +78,16 @@ export class EventStore {
 
   clearEvents() {
     this.eventStorage.length = 0;
+  }
+
+  compareDates(eventA, eventB) {
+    const dateA = new Date(eventA.start_time);
+    const dateB = new Date(eventB.start_time);
+    if (dateA < dateB) {
+      return 1;
+    } else {
+      return -1;
+    }
   }
 }
 
