@@ -17,6 +17,10 @@ export class EventDetails extends React.Component {
     this.props.eventDetailsStore.setEventId(+this.props.match.params.id);
   }
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   onSaveName = value => {
     this.props.eventDetailsStore.updateEventName(value);
   };
