@@ -6,8 +6,9 @@ const defaultPageSize = 20;
 export class EventStore {
   eventStorage = [];
   loading = false;
-  offset = 0;
+  page = 0;
   pageSize = defaultPageSize;
+  hasNext = true;
 
   constructor(eventService) {
     this.eventService = eventService;
@@ -21,12 +22,8 @@ export class EventStore {
     return this.eventStorage.find(event => event.id === eventId);
   }
 
-  setOffset(offset) {
-    this.offset = offset;
-  }
-
   resetPagination() {
-    this.offset = 0;
+    this.page = 0;
     this.eventStorage = [];
   }
 
@@ -36,15 +33,13 @@ export class EventStore {
     return this.eventService
       .search({
         limit: this.pageSize,
-        offset: this.offset
+        offset: this.page * this.pageSize
       })
       .then(
-        action("loadEvents success", ({ data }) => {
-          this.eventStorage = uniqBy(
-            this.eventStorage.concat(data.results),
-            "id"
-          );
-          this.setOffset(this.eventStorage.length);
+        action("loadEvents success", ({ events, hasNext }) => {
+          this.eventStorage = uniqBy(this.eventStorage.concat(events), "id");
+          this.page++;
+          this.hasNext = hasNext;
         })
       )
       .finally(
@@ -58,9 +53,11 @@ export class EventStore {
     return this.eventService
       .get(eventId)
       .then(
-        action("loadEvent success", ({ data }) => {
-          let idx = this.eventStorage.findIndex(event => event.id === data.id);
-          this.eventStorage.splice(idx, 1, data);
+        action("loadEvent success", receviedEvent => {
+          let idx = this.eventStorage.findIndex(
+            event => event.id === receviedEvent.id
+          );
+          this.eventStorage.splice(idx, 1, receviedEvent);
         })
       )
       .finally(
@@ -74,7 +71,7 @@ export class EventStore {
     return this.eventService
       .update(id, eventFields)
       .then(
-        action("updateEvent success", ({ data }) => {
+        action("updateEvent success", () => {
           const event = this.getEvent(id);
           Object.assign(event, eventFields);
         })
@@ -88,10 +85,9 @@ export class EventStore {
 decorate(EventStore, {
   eventStorage: observable,
   loading: observable,
-  currentPage: observable,
-  pageSize: observable,
   events: computed,
-  nextPage: action,
+  hasNext: observable,
+  setOffset: action,
   resetPagination: action,
   loadEvents: action,
   loadEvent: action,
