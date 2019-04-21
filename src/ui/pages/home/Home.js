@@ -19,7 +19,7 @@ export class Home extends React.Component {
   };
 
   render() {
-    const { events } = this.props.eventStore;
+    const { events, hasNext } = this.props.eventStore;
 
     return (
       <>
@@ -29,7 +29,7 @@ export class Home extends React.Component {
             <InfiniteScroll
               dataLength={events}
               next={this.loadMoreEvents}
-              hasMore={true}
+              hasMore={hasNext}
             >
               <GridRow>
                 {events &&
@@ -53,7 +53,7 @@ Home.propTypes = {
   eventStore: PropTypes.shape({
     events: PropTypes.array,
     loading: PropTypes.bool,
-    nextPage: PropTypes.func,
+    hasNext: PropTypes.bool,
     resetPagination: PropTypes.func,
     loadEvents: PropTypes.func
   })
