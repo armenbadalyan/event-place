@@ -6,6 +6,7 @@ const DescriptionRenderer = styled.div.attrs(props => ({
 }))`
   * {
     max-width: 100%;
+    word-break: break-word;
   }
 
   img {
