@@ -1,11 +1,12 @@
 import { decorate, observable, action, computed } from "mobx";
+import uniqBy from "lodash.uniqby";
 
 const defaultPageSize = 20;
 
 export class EventStore {
   eventStorage = [];
   loading = false;
-  currentPage = 0;
+  offset = 0;
   pageSize = defaultPageSize;
 
   constructor(eventService) {
@@ -20,12 +21,12 @@ export class EventStore {
     return this.eventStorage.find(event => event.id === eventId);
   }
 
-  nextPage() {
-    this.currentPage++;
+  setOffset(offset) {
+    this.offset = offset;
   }
 
   resetPagination() {
-    this.currentPage = 0;
+    this.offset = 0;
     this.eventStorage = [];
   }
 
@@ -35,11 +36,15 @@ export class EventStore {
     return this.eventService
       .search({
         limit: this.pageSize,
-        offset: this.pageSize * this.currentPage
+        offset: this.offset
       })
       .then(
         action("loadEvents success", ({ data }) => {
-          this.eventStorage = this.eventStorage.concat(data.results);
+          this.eventStorage = uniqBy(
+            this.eventStorage.concat(data.results),
+            "id"
+          );
+          this.setOffset(this.eventStorage.length);
         })
       )
       .finally(
@@ -55,7 +60,7 @@ export class EventStore {
       .then(
         action("loadEvent success", ({ data }) => {
           let idx = this.eventStorage.findIndex(event => event.id === data.id);
-          this.eventStorage.splice(idx, 1, data); // =  eventStorage.concat(data.results);
+          this.eventStorage.splice(idx, 1, data);
         })
       )
       .finally(
