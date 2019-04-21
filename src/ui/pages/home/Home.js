@@ -10,16 +10,34 @@ import { GridRow, GridItem } from "../../components/Grid";
 
 export class Home extends React.Component {
   componentDidMount() {
-    this.props.eventStore.resetPagination();
-    this.props.eventStore.loadEvents();
+    if (this.props.eventPaginationStore.page === 0) {
+      this.loadMoreEvents();
+    }
   }
 
-  loadMoreEvents = () => {
-    this.props.eventStore.loadEvents();
+  loadMoreEvents = async () => {
+    const paginationStore = this.props.eventPaginationStore;
+    const { getNextPageParams } = paginationStore;
+    const { hasNext } = await this.props.eventStore.loadEvents(
+      getNextPageParams()
+    );
+
+    if (hasNext) {
+      paginationStore.incrementPage();
+    } else {
+      paginationStore.setHasNext(false);
+    }
+  };
+
+  refreshEvents = () => {
+    this.props.eventStore.clearEvents();
+    this.props.eventPaginationStore.resetPagination();
+    this.loadMoreEvents();
   };
 
   render() {
-    const { events, hasNext } = this.props.eventStore;
+    const { events } = this.props.eventStore;
+    const { hasNext } = this.props.eventPaginationStore;
 
     return (
       <>
@@ -59,7 +77,7 @@ Home.propTypes = {
   })
 };
 
-export default inject("eventStore")(observer(Home));
+export default inject("eventStore", "eventPaginationStore")(observer(Home));
 
 const EventWall = styled.div`
   max-width: 1440px;
