@@ -67,9 +67,14 @@ Home.propTypes = {
   eventStore: PropTypes.shape({
     events: PropTypes.array,
     loading: PropTypes.bool,
-    hasNext: PropTypes.bool,
-    resetPagination: PropTypes.func,
     loadEvents: PropTypes.func
+  }),
+  paginationStore: PropTypes.shape({
+    page: PropTypes.number,
+    getNextPageParams: PropTypes.func,
+    incrementPage: PropTypes.func,
+    setHasNext: PropTypes.func,
+    hasNext: PropTypes.func
   })
 };
 
