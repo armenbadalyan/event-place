@@ -2,8 +2,9 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { inject, observer } from "mobx-react";
-import styled from "styled-components";
+import styled, { withTheme } from "styled-components";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { ScaleLoader } from "react-spinners";
 import Header from "../../components/Header";
 import EventCard from "../../components/EventCard";
 import { GridRow, GridItem } from "../../components/Grid";
@@ -29,12 +30,6 @@ export class Home extends React.Component {
     }
   };
 
-  refreshEvents = () => {
-    this.props.eventStore.clearEvents();
-    this.props.eventPaginationStore.resetPagination();
-    this.loadMoreEvents();
-  };
-
   render() {
     const { events } = this.props.eventStore;
     const { hasNext } = this.props.eventPaginationStore;
@@ -48,6 +43,7 @@ export class Home extends React.Component {
               dataLength={events}
               next={this.loadMoreEvents}
               hasMore={hasNext}
+              loader={<Loader />}
             >
               <GridRow>
                 {events &&
@@ -84,4 +80,17 @@ const EventWall = styled.div`
   padding: 10px;
   padding-top: 60px;
   margin: 0 auto;
+`;
+
+const Loader = withTheme(({ theme }) => {
+  return (
+    <LoaderWrapper>
+      <ScaleLoader color={theme.accent} />
+    </LoaderWrapper>
+  );
+});
+
+const LoaderWrapper = styled.div`
+  padding: 10px;
+  text-align: center;
 `;
