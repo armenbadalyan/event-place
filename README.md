@@ -1,4 +1,4 @@
-# Event Place
+# Event Place [![Build Status](https://travis-ci.com/armenbadalyan/event-place.svg?branch=master)](https://travis-ci.com/armenbadalyan/event-place)
 A simple React application that allows listing, viewing and editing events.
 [See it live.](http://event-place-app.s3-website.eu-central-1.amazonaws.com/)
 
